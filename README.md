@@ -1,2 +1,2 @@
 # invert-pendulum
-Repo for control of invert pendulum
+Repo for the controling of invert pendulum
