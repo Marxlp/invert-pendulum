@@ -69,10 +69,11 @@ class Invert_Pendulum(object):
         #F = 320 * (np.pi/2 - state[2]) - 20 * (state[3])
         F = self.F
         
-        dydx[3] = ( F * sin(state[2]) + 1/2 * M2 * state[3]**2 * cos(state[2])*sin(state[2]) - G * cos(state[2]) *(M1 + M2)) / \
-                  (1/6 * L2**2 * (M1 + M2) - 1/2* M2 * L2 * (sin(state[2]))**2)
+        dydx[3] = ( F * sin(state[2]) + 1/2 * M2 * state[3]**2 * cos(state[2])*sin(state[2])
+                     - G * cos(state[2]) *(M1 + M2)) / \
+                  (7/6 * L2 * (M1 + M2) - 1/2* M2 * L2 * (sin(state[2]))**2)
 
-        dydx[1] = 1/6 * L2**2 * 1/sin(state[2])*(dydx[3]) + G * 1/tan(state[2])        
+        dydx[1] = 7/6 * L2**2 * 1/sin(state[2])*(dydx[3]) + G * 1/tan(state[2])
         return dydx
     
     def take_action(self,action):
@@ -128,9 +129,9 @@ class Invert_Pendulum(object):
         # Potential energy
         V = L1 * M1* G * np.sin(self.state[2])
         # Kinetic energy
-        T = 1/2.0 * M1 * self.state[1]**2 + 1/12.0 * M1 * L1**2 * self.state[3]**2 + \
-            1/2.0 * M2 * (self.state[3] * L1/2.0 * cos(self.state[2]) + self.state[2])**2 + \
-            1/2.0 * M2 * (self.state[3] * L1/2.0 * sin(self.state[2]))**2 
+        T = 1/2.0 * M1 * self.state[1]**2.0 + 1/12.0* M2 * L2 **2 * self.state[3]**2 + \
+            1/2.0 * M2 * (self.state[1] - self.state[3] * L2/2 * sin(self.state[2]))**2 + \
+            1/2.0 * M2 * (self.state[3] * L2/2.0 * cos(self.state[2]))**2
         return V+T
     
     
@@ -216,7 +217,7 @@ class Invert_Pendulum(object):
         def init():
             """initialize animation"""
             box.set_height(boxHeight)
-            box.set_width(L2)
+            box.set_width(L1)
             line.set_data([], [])
             time_text.set_text('')
             energy_text.set_text('')
@@ -226,7 +227,7 @@ class Invert_Pendulum(object):
             """perform animation step"""
             #print('animation i frame:%d' % i)
             (posX,posY),time_elapsed,energy = self.history[i]
-            box.set_x(posX[0] - L2 / 2)
+            box.set_x(posX[0] - L1 / 2)
             line.set_data(posX,posY)
             time_text.set_text('time = %.1f' % time_elapsed)
             energy_text.set_text('energy = %.3f J' % energy)
